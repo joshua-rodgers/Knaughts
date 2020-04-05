@@ -98,7 +98,7 @@ public class Knaughts extends KeyAdapter {
         long start_time = System.currentTimeMillis();
         long elapsed = 0;
         long end_time = 0;
-
+        
         while(player.is_alive){
             for(int i = 0; i < projectiles.length; i++){
                 if(projectiles[i] != null){
@@ -120,7 +120,7 @@ public class Knaughts extends KeyAdapter {
 
             try {
                 // TRYING TO KEEP GAME LOOP FROM HAPPENING TOO MANY UNNECESSARY TIMES
-                Thread.sleep(125);
+                Thread.sleep(100);
             } catch (Exception e) {
                 e.printStackTrace();
             } 
@@ -128,8 +128,9 @@ public class Knaughts extends KeyAdapter {
             end_time = System.currentTimeMillis();
             elapsed += end_time - start_time;
 
-            // 6 TIMES PER SECOND SEEMS AS FAST AS CAN BE HANDLED RIGHT NOW
-            if(elapsed >= 150){
+            // 5 TIMES WORKS FOR ME, NOT SMOOTH BUT I LIKE IT FOR NOW
+            if(elapsed >= 200){
+                // System.out.println(elapsed);
                 window.surface.render();
                 elapsed = 0;
             }
@@ -180,7 +181,9 @@ public class Knaughts extends KeyAdapter {
                     projectiles[i] = new Projectile();
                     projectiles[i].current.x = player.current.x;
                     projectiles[i].current.y = player.current.y - 1;
-                    board[projectiles[i].current.y][projectiles[i].current.x] = projectiles[i].sprite;
+                    if(projectiles[i].current.y > 0){
+                        board[projectiles[i].current.y][projectiles[i].current.x] = projectiles[i].sprite; // if at edge don't bother drawing bullet
+                    }
                     break;
                 }
 
