@@ -12,14 +12,15 @@ public class Knaughts extends KeyAdapter {
     public char[][] board;
     Random r;
     private Game_Character player;
-    //private Game_Character enemy;
+    private Game_Character enemy;
     Projectile[] projectiles;
-    Weapon [] weapons;
+    Weapon[] weapons;
 
     public Knaughts(){
         r = new Random();
         board = new char[10][16];
         player = new Game_Character();
+        enemy = new Enemy();
         projectiles = new Projectile[10];
         weapons = new Weapon[10];
         
@@ -38,11 +39,13 @@ public class Knaughts extends KeyAdapter {
                 }
             }
         }
+
         // NEEDS TO BE CALLED RANDOMLY FOR DIFFERENT WEAPONS 
         // HARD CODED TO PLACE A RIFLE - JUST A TEST
         place_weapon();
 
         board[player.current.y][player.current.x] = player.avatar;
+        board[enemy.current.y][enemy.current.x] = enemy.avatar;
 
         this.window = new Game_Window(this, WINDOW_WIDTH, WINDOW_HEIGHT);
         window.addKeyListener(this);
@@ -98,14 +101,15 @@ public class Knaughts extends KeyAdapter {
         long start_time = System.currentTimeMillis();
         long elapsed = 0;
         long end_time = 0;
+        Enemy_AI ai = new Enemy_AI();
         
         while(player.is_alive){
             for(int i = 0; i < projectiles.length; i++){
                 if(projectiles[i] != null){
                     if(projectiles[i].current.y > 0){
                         board[projectiles[i].current.y][projectiles[i].current.x] = ' ';
-                        projectiles[i].current.y--;
-                        if(projectiles[i].current.y == 0){
+                        projectiles[i].current.y += projectiles[i].direction;
+                        if(projectiles[i].current.y == 0 || projectiles[i].current.y == 9){
                             projectiles[i] = null;
                             continue;
                         }
@@ -114,6 +118,11 @@ public class Knaughts extends KeyAdapter {
                     
                 }
             }
+
+            if(!ai.isAlive()){
+                ai.start();
+            }
+
             if(player.current.x == weapons[0].current.x && player.current.y == weapons[0].current.y && weapons[0].is_available == true){
                 player.collect_weapon(weapons[0]);
             }
@@ -202,6 +211,34 @@ public class Knaughts extends KeyAdapter {
     
     }
 
+    class Enemy extends Game_Character{
+        char bullet = '"';
+        public Enemy(){
+            avatar = 'X';
+        }
+
+        @Override
+        public void use_weapon(){
+            for(int i = 0; i < projectiles.length; i++){
+                if(projectiles[i] == null){
+                    projectiles[i] = new Projectile();
+                    projectiles[i].sprite = '"';
+                    projectiles[i].direction = 1;
+                    projectiles[i].current.x = enemy.current.x;
+                    if(enemy.current.y < 8){
+                        projectiles[i].current.y = enemy.current.y + 1;
+                    }
+                    if(projectiles[i].current.y < 9){
+                        board[projectiles[i].current.y][projectiles[i].current.x] = this.bullet; // if at edge don't bother drawing bullet
+                    }
+                    break;
+                }
+            }
+        }
+
+ 
+    }
+
 
     abstract class Weapon{
         char type;
@@ -259,10 +296,55 @@ public class Knaughts extends KeyAdapter {
         // Location last; MAYBE FOR FUTURE USE? TELEPORTATION?
         char sprite;
         int power;
+        int direction;
 
         public Projectile(){
             current = new Location();
+            direction = -1;
             sprite = '\'';
+        }
+    }
+
+    class Enemy_AI extends Thread {
+        
+        public void attack(){
+            // SHOOT AT PLAYER
+            if(enemy.current.x == player.current.x){
+                enemy.use_weapon();
+            }else{
+                aim();
+            }
+        }
+        // I DON'T LIKE MANIPULATING BOARD LIKE THIS
+        // THERE SHOULD BE ASPARATE METHOD THAT ONLY
+        // SERVES TO UPDATE BOARD LEAVING METHODS
+        // LIKE THIS TO JUST CHANGE DATA
+        public void aim(){
+            if(player.current.x > enemy.current.x && enemy.current.x != board[0].length - 1){
+                board[enemy.current.y][enemy.current.x] = ' ';
+                enemy.current.x++;
+                board[enemy.current.y][enemy.current.x] = enemy.avatar;
+            }else if(player.current.x < enemy.current.x && enemy.current.x != 1){
+                board[enemy.current.y][enemy.current.x] = ' ';
+                enemy.current.x--;
+                board[enemy.current.y][enemy.current.x] = enemy.avatar;
+            }
+        }
+
+        public void run(){
+            long start_time = System.currentTimeMillis();
+            long end_time = System.currentTimeMillis();
+            long elapsed = 0;
+
+            while(player.is_alive){
+                try {
+                    Thread.sleep(r.nextInt(600));
+                } catch (Exception e) {
+                    //TODO: handle exception
+                    e.printStackTrace();
+                }
+                attack();
+            }
         }
     }
 }
