@@ -8,16 +8,17 @@
  ~~Trying to be as organized as possible with the code. Should probably split it up into different files.~~ Yeah,
  scratch that. Just hacking.
  
- Demos:
- Using land mines
+ ### Demos:
+ 
+ **Using land mines:**
  
  ![Using land mines GIF](knaughts_demo.gif)
  
- Using the rifle
+ **Using the rifle successfully:**
  
  ![Using the rifle GIF](knaughts_demo3.gif)
  
- Using the rifle successfully
+ **Using the rifle poorly:**
  
  ![Using the rifle successfully GIF](knaughts_demo2.gif)
  
