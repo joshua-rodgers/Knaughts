@@ -10,11 +10,14 @@
  
  Demos:
  Using land mines
+ 
  ![Using land mines GIF](knaughts_demo.gif)
  
  Using the rifle
+ 
  ![Using the rifle GIF](knaughts_demo.gif)
  
  Using the rifle successfully
+ 
  ![Using the rifle successfully GIF](knaughts.gif)
  
