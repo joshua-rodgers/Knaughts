@@ -15,9 +15,9 @@
  
  Using the rifle
  
- ![Using the rifle GIF](knaughts_demo.gif)
+ ![Using the rifle GIF](knaughts_demo3.gif)
  
  Using the rifle successfully
  
- ![Using the rifle successfully GIF](knaughts.gif)
+ ![Using the rifle successfully GIF](knaughts_demo2.gif)
  
